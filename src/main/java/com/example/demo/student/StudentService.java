@@ -1,34 +1,49 @@
 package com.example.demo.student;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentService {
-  public static List<Student> students = Arrays.asList(new Student(
-      1L,
-      "example@gmail.com",
-      "Example",
-      21,
-      LocalDate.of(1999, 3, 28)
-  ), new Student(
-      2L,
-      "hoangnguyen@gmail.com",
-      "Hoang Nguyen",
-      21,
-      LocalDate.of(1999, 3, 28)
-  ));
+    private final StudentRepository studentRepository;
 
-  public List<Student> getStudents() {
-    return students;
-  }
+    @Autowired
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
 
-  public Student getStudentById(Integer id) {
-    return students.stream().filter(student -> id.equals(student.getId().intValue()))
-        .findFirst().orElseThrow();
-  }
+    public List<Student> getStudents() {
+        return studentRepository.findAll();
+    }
+
+    public Student getStudentById(Long id) {
+        Optional<Student> studentResponse = studentRepository.findById(id);
+//       return students.stream().filter(student -> id.equals(student.getId().intValue()))
+//                .findFirst().orElseThrow();
+        return studentResponse.get();
+    }
+
+    public void addNewStudent(Student student) {
+//        studentRepository.save(student);
+        Optional<Student> studentOptional = studentRepository.findStudentByEmail(student.getEmail());
+        if(studentOptional.isPresent()) {
+            throw new IllegalStateException("email is taken");
+        }
+        studentRepository.save(student);
+    }
+
+    public void deleteStudent(Long id) {
+        boolean isExists = studentRepository.existsById(id);
+        if(!isExists) {
+            throw new IllegalStateException(
+                    "student with id" + id + " does not exists"
+            );
+        }
+        studentRepository.deleteById(id);
+    }
 }

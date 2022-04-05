@@ -4,10 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,8 +26,18 @@ public class StudentController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Student> getStudentById(@PathVariable("id") Integer id) {
+  public ResponseEntity<Student> getStudentById(@PathVariable("id") Long id) {
     log.info("getting student by id {}", id);
     return ResponseEntity.ok(studentService.getStudentById(id));
+  }
+
+  @PostMapping()
+  public void registerNewStudent(@RequestBody Student student){
+    studentService.addNewStudent(student);
+  }
+
+  @DeleteMapping(path="{id}")
+  public void deleteStudent(@PathVariable("id") Long id){
+    studentService.deleteStudent(id);
   }
 }
