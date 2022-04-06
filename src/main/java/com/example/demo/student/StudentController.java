@@ -13,31 +13,39 @@ import java.util.List;
 @Log4j2
 @RequestMapping(path = "api/v1/student")
 public class StudentController {
-  private final StudentService studentService;
+    private final StudentService studentService;
 
-  @Autowired
-  public StudentController(StudentService studentService) {
-    this.studentService = studentService;
-  }
+    @Autowired
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
+    }
 
-  @GetMapping()
-  public List<Student> getStudents() {
-    return studentService.getStudents();
-  }
+    @GetMapping()
+    public List<Student> getStudents() {
+        return studentService.getStudents();
+    }
 
-  @GetMapping("/{id}")
-  public ResponseEntity<Student> getStudentById(@PathVariable("id") Long id) {
-    log.info("getting student by id {}", id);
-    return ResponseEntity.ok(studentService.getStudentById(id));
-  }
+    @GetMapping("/{id}")
+    public ResponseEntity<Student> getStudentById(@PathVariable("id") Long id) {
+        log.info("getting student by id {}", id);
+        return ResponseEntity.ok(studentService.getStudentById(id));
+    }
 
-  @PostMapping()
-  public void registerNewStudent(@RequestBody Student student){
-    studentService.addNewStudent(student);
-  }
+    @PostMapping()
+    public void registerNewStudent(@RequestBody Student student) {
+        studentService.addNewStudent(student);
+    }
 
-  @DeleteMapping(path="{id}")
-  public void deleteStudent(@PathVariable("id") Long id){
-    studentService.deleteStudent(id);
-  }
+    @DeleteMapping(path = "{id}")
+    public void deleteStudent(@PathVariable("id") Long id) {
+        studentService.deleteStudent(id);
+    }
+
+    @PutMapping(path = "{id}")
+    public void updateStudent(
+            @PathVariable("id") Long id,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String email) {
+        studentService.updateStudent(id, name, email);
+    }
 }
